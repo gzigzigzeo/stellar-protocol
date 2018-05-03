@@ -26,30 +26,32 @@ Our goal is to provide simple blockchain-based, Legder-compatible method of OAut
 
 Given we have two parties: let's call them user and developer.
 
-* User keypair and application public key on user’s side.
-* Application keypair on application’s side.
-* Application authentication endpoint (URL, HTTPS-enabled).
+Both of them have the following:
+
+* User keypair and developer public key on user side.
+* Developer keypair on developer side.
+* Authentication endpoint (URL, HTTPS-enabled).
 
 The process looks as following:
 
 * User requests challenge from authentication endpoint using GET method.
 * Challenge is the transaction meets following criterias:
-  * It represents noop (manage meta data of application account or payment of minimal amount to user, for example).
+  * It represents noop (manage meta data of some account or payment of minimal amount to user, for example).
   * It contains random part (random payment source account, for example).
-  * It is signed by application’s private key.
-  * It contains issue time and expire time (time must be taken from applications server).
-  * It never goes to blockchain and must be invalid in case somebody will try to send it to network.
+  * It is signed by developers private key.
+  * It contains issue time and expire time (time must be taken from developers server).
+  * It never goes to blockchain and *must* be invalid in case somebody will try to send it to network.
 * Challenge transaction is sent to user.
-* User checks the signature of challenge transaction using known application public key.
+* User checks the signature of challenge transaction using known developers public key.
 * If developers signature is correct, user signs transaction by his own private key (using Ledger, if he wants to).
-* User sends it to application endpoint using POST method along with his own public key.
-* Application checks:
+* User sends it to developer endpoint using POST method along with his own public key.
+* Developer checks:
   * Its own signature on received transaction.
   * User’s signature against received public key.
   * Transaction creation time bounds (current time must be within it).
   * The fact that transaction is not older than n (5-10 is recommened).
 * If all checks are positive, transaction hash is:
-  * Saved on the application’s side along with session time bounds and user’s public key.
+  * Saved on the developers side along with session time bounds and user’s public key.
   * Sent to user and is considered as session token for future requests.
 
 ## Rationale
